@@ -8,11 +8,9 @@ from nplab.instrument.spectrometer.seabreeze import OceanOpticsSpectrometer
 
 # Worth asking for a manual position reading first to compare to!
 class BioFuMExperiment(Experiment):
-    wait_time = 300 #  5 minutes between readings
-
-
-    def __init__(self):
+    def __init__(self, reading_interval=300):
         super().__init__()
+        self.reading_interval = reading_interval #  Default: 5 minutes between readings
 
         #  Iniialise devices
         try:
@@ -45,7 +43,7 @@ class BioFuMExperiment(Experiment):
                 spectra.create_dataset(self.spectrometer.read_spectrum(
                     bundle_metadata=True))
 
-                next_iteration = iteration_start + self.wait_time
+                next_iteration = iteration_start + self.reading_interval
                 time_to_wait = next_iteration - time.time()
                 self.log(f'Iteration {iteration} complete. Waiting...')
                 self.wait_or_stop(time_to_wait)
