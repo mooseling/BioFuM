@@ -33,7 +33,7 @@ class BioFuMExperiment(Experiment):
 
             while True:
                 self.log(f"Starting iteration {iteration}")
-                iteration_start = time()
+                iteration_start = time.time()
 
                 self.log('Focusing')
                 self.camera_and_stage.autofocus()
@@ -46,7 +46,7 @@ class BioFuMExperiment(Experiment):
                     bundle_metadata=True))
 
                 next_iteration = iteration_start + self.wait_time
-                time_to_wait = next_iteration - time()
+                time_to_wait = next_iteration - time.time()
                 self.log(f'Iteration {iteration} complete. Waiting...')
                 self.wait_or_stop(time_to_wait)
                 iteration += 1
