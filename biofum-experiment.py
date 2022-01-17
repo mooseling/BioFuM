@@ -25,14 +25,14 @@ class BioFuMExperiment(Experiment):
 
 
     def run(self):
-        iterations = 0
+        iteration = 0
         try:
             self.log('Starting experiment')
             images = self.create_data_group("images_%d")
             spectra = self.create_data_group("spectra_%d")
 
             while True:
-                self.log(f"Starting iteration {iterations}")
+                self.log(f"Starting iteration {iteration}")
                 iteration_start = time()
 
                 self.log('Focusing')
@@ -45,9 +45,11 @@ class BioFuMExperiment(Experiment):
                 spectra.create_dataset(self.spectrometer.read_spectrum(
                     bundle_metadata=True))
 
-                iterations += 1
                 next_iteration = iteration_start + self.wait_time
-                self.wait_or_stop(next_iteration - time())
+                time_to_wait = next_iteration - time()
+                self.log(f'Iteration {iteration} complete. Waiting...')
+                self.wait_or_stop(time_to_wait)
+                iteration += 1
         except ExperimentStopped:
             pass #don't raise an error if we just clicked "stop"
         except Exception as e:
