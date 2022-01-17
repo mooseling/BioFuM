@@ -5,9 +5,6 @@ from nplab.experiment import Experiment, ExperimentStopped
 
 # Worth asking for a manual position reading first to compare to!
 class BioFuMExperiment(Experiment):
-    wait_time = 300 #  5 minutes between readings
-
-
     def __init__(self, reading_interval=5):
         super().__init__()
         self.reading_interval = reading_interval #  Default: 5 seconds between readings
@@ -30,7 +27,11 @@ class BioFuMExperiment(Experiment):
                 self.log('Taking spectrum')
                 self.log('Dummy: Taking spectrum!')
 
-                next_iteration = iteration_start + self.wait_time
+                if iteration == 3:
+                    self.log(f'Stopping after iteration {iteration}')
+                    self.stop()
+
+                next_iteration = iteration_start + self.reading_interval
                 time_to_wait = next_iteration - time.time()
                 self.log(f'Iteration {iteration} complete. Waiting...')
                 self.wait_or_stop(time_to_wait)
