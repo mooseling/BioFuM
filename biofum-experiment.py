@@ -4,22 +4,22 @@ from nplab.experiment import Experiment, ExperimentStopped
 from nplab.instrument.stage.Marzhauser.tango import Tango
 from nplab.instrument.camera.lumenera import LumeneraCamera
 from nplab.instrument.spectrometer.seabreeze import OceanOpticsSpectrometer
+from nplab.utils.notified_property import DumbNotifiedProperty
+from nplab.ui.ui_tools import UiTools, QuickControlBox
+from nplab.utils.gui import QtWidgets, get_qt_app, uic
 
 
-# Worth asking for a manual position reading first to compare to!
 class BioFuMExperiment(Experiment):
-    def __init__(self, reading_interval=300):
+    reading_interval = DumbNotifiedProperty(10) #  minutes
+    def __init__(self, reading_interval=10):
         super().__init__()
-        self.reading_interval = reading_interval #  Default: 5 minutes between readings
+        self.reading_interval = reading_interval
 
         #  Iniialise devices
-        try:
-            self.stage = Tango()
-            self.camera = LumeneraCamera()
-            self.spectrometer = OceanOpticsSpectrometer()
-            self.camera_and_stage = CameraWithLocation(camera, stage)
-        except Exception:
-            pass
+        self.stage = Tango()
+        self.camera = LumeneraCamera()
+        self.spectrometer = OceanOpticsSpectrometer()
+        self.camera_and_stage = CameraWithLocation(camera, stage)
 
 
     def run(self):
@@ -43,19 +43,39 @@ class BioFuMExperiment(Experiment):
                 spectra.create_dataset(self.spectrometer.read_spectrum(
                     bundle_metadata=True))
 
-                next_iteration = iteration_start + self.reading_interval
+                next_iteration = iteration_start + (self.reading_interval * 60)
                 time_to_wait = next_iteration - time.time()
                 self.log(f'Iteration {iteration} complete. Waiting...')
                 self.wait_or_stop(time_to_wait)
                 iteration += 1
         except ExperimentStopped:
-            pass #don't raise an error if we just clicked "stop"
+            pass #  don't raise an error if we just clicked "stop"
         except Exception as e:
             self.log('Error!')
             self.log(str(e))
             self.log('Ending experiment')
-        # finally:
-            #  Do any cleanup?
+            raise ExperimentStopped()
+
+    def get_qt_ui(self):
+        """Return basic controls GUI for the experiment"""
+        box = QuickControlBox("BioFuM Experiment")
+        box.add_doublespinbox("reading_interval")
+        box.add_button("start")
+        box.add_button("stop")
+        box.auto_connect_by_name(self)
+        return box
+
+
+class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
+    def __init__(self, experiment, parent=None):
+        super(BioFuMExperiment_Gui, self).__init__(parent)
+        uic.loadUi('biofum-experiment.ui', self)
+        self.experiment = experiment
+
+        self.Main_widget = self.replace_widget(
+            self.Controls,                #  layout
+            self.Main_widget,             #  old_widget
+            self.experiment.get_qt_ui())  #  new_widget
 
 
 if __name__ == '__main__':
@@ -64,12 +84,16 @@ if __name__ == '__main__':
     except Exception as e:
         print('Error trying to set dataset')
         print(e)
+        print('Stopping')
+        quit()
 
     try:
         bfm_experiment = BioFuMExperiment()
     except Exception as e:
         print('Error creating BioFuMExperiment')
         print(e)
+        print('Stopping')
+        quit()
 
     try:
         bfm_experiment.run()
