@@ -77,10 +77,20 @@ class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
             self.Main_widget,             #  old_widget
             self.experiment.get_qt_ui())  #  new_widget
 
+        self.Camera_viewer = self.replace_widget(
+            self.Device_viewers_layout,
+            self.Camera_viewer,
+            self.camera.get_qt_ui())
+
+        self.Spectrometer_viewer = self.replace_widget(
+            self.Device_viewers_layout,
+            self.Spectrometer_viewer,
+            self.spectrometer.get_qt_ui())
+
 
 if __name__ == '__main__':
     try:
-        nplab.current_datafile()  # Open diagloue to create file
+        nplab.current_datafile() #  Open diagloue to create file
     except Exception as e:
         print('Error trying to set dataset')
         print(e)
