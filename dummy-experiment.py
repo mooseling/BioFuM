@@ -1,6 +1,7 @@
 import time
 import nplab
 import sys
+import traceback
 from nplab.experiment import Experiment, ExperimentStopped
 from nplab.utils.notified_property import DumbNotifiedProperty
 from nplab.instrument.stage import DummyStage
@@ -56,9 +57,8 @@ class BioFuMExperiment(Experiment):
         except Exception as e:
             self.log('Error!')
             self.log(str(e))
+            self.log(traceback.format_exc())
             self.log('Ending experiment')
-        # finally:
-            #  Do any cleanup?
 
 
     def get_qt_ui(self):
