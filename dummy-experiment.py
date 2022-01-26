@@ -63,12 +63,12 @@ class BioFuMExperiment(Experiment):
 
     def get_qt_ui(self):
         """Return a user interface for the experiment"""
-        gb = QuickControlBox("BioFuM Experiment")
-        gb.add_doublespinbox("reading_interval")
-        gb.add_button("start")
-        gb.add_button("stop")
-        gb.auto_connect_by_name(self)
-        return gb
+        control_box = QuickControlBox("BioFuM Experiment")
+        control_box.add_doublespinbox("reading_interval")
+        control_box.add_button("start")
+        control_box.add_button("stop")
+        control_box.auto_connect_by_name(self)
+        return control_box
 
 
 class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
@@ -78,9 +78,19 @@ class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
         self.experiment = experiment
 
         self.Main_widget = self.replace_widget(
-            self.Controls,                #  layout
-            self.Main_widget, #  old_widget
-            self.experiment.get_qt_ui())     #  new_widget
+            self.Controls,               #  layout
+            self.Main_widget,            #  old_widget
+            self.experiment.get_qt_ui()) #  new_widget
+
+        self.Camera_viewer = self.replace_widget(
+            self.Device_viewers_layout,
+            self.Camera_viewer,
+            self.experiment.camera_and_stage.get_qt_ui())
+
+        self.Spectrometer_viewer = self.replace_widget(
+            self.Device_viewers_layout,
+            self.Spectrometer_viewer,
+            self.experiment.spectrometer.get_qt_ui())
 
 
 if __name__ == '__main__':
