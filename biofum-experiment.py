@@ -1,8 +1,10 @@
 import time
 import nplab
+import traceback
 from nplab.experiment import Experiment, ExperimentStopped
 from nplab.instrument.stage.Marzhauser.tango import Tango
 from nplab.instrument.camera.lumenera import LumeneraCamera
+from nplab.instrument.camera.camera_with_location import CameraWithLocation
 from nplab.instrument.spectrometer.seabreeze import OceanOpticsSpectrometer
 from nplab.utils.notified_property import DumbNotifiedProperty
 from nplab.ui.ui_tools import UiTools, QuickControlBox
@@ -19,15 +21,15 @@ class BioFuMExperiment(Experiment):
         self.stage = Tango()
         self.camera = LumeneraCamera()
         self.spectrometer = OceanOpticsSpectrometer()
-        self.camera_and_stage = CameraWithLocation(camera, stage)
+        self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
 
     def run(self):
         iteration = 0
         try:
             self.log('Starting experiment')
-            images = self.create_data_group("images_%d")
-            spectra = self.create_data_group("spectra_%d")
+            images = self.create_data_group('images_%d')
+            spectra = self.create_data_group('spectra_%d')
 
             while True:
                 self.log(f"Starting iteration {iteration}")
@@ -36,12 +38,14 @@ class BioFuMExperiment(Experiment):
                 self.log('Focusing')
                 self.camera_and_stage.autofocus()
                 self.log('Taking picture')
-                images.create_dataset(self.camera.raw_image(
-                                      bundle_metadata=True,
-                                      update_latest_frame=True))
-                self.log('Taking spectrum')
-                spectra.create_dataset(self.spectrometer.read_spectrum(
-                    bundle_metadata=True))
+                images.create_dataset('image_%d',
+                                      data=self.camera.raw_image(
+                                          bundle_metadata=True,
+                                          update_latest_frame=True))
+                self.log('Reading spectrum')
+                spectra.create_dataset('spectrum_%d',
+                                       data=self.spectrometer.read_spectrum(
+                                           bundle_metadata=True))
 
                 next_iteration = iteration_start + (self.reading_interval * 60)
                 time_to_wait = next_iteration - time.time()
@@ -53,6 +57,7 @@ class BioFuMExperiment(Experiment):
         except Exception as e:
             self.log('Error!')
             self.log(str(e))
+            self.log(traceback.format_exc())
             self.log('Ending experiment')
             raise ExperimentStopped()
 
@@ -80,12 +85,12 @@ class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
         self.Camera_viewer = self.replace_widget(
             self.Device_viewers_layout,
             self.Camera_viewer,
-            self.camera.get_qt_ui())
+            self.experiment.camera.get_qt_ui())
 
         self.Spectrometer_viewer = self.replace_widget(
             self.Device_viewers_layout,
             self.Spectrometer_viewer,
-            self.spectrometer.get_qt_ui())
+            self.experiment.spectrometer.get_qt_ui())
 
 
 if __name__ == '__main__':
