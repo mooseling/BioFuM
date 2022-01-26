@@ -73,7 +73,7 @@ class BioFuMExperiment(Experiment):
 class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
     def __init__(self, experiment, parent=None):
         super(BioFuMExperiment_Gui, self).__init__(parent)
-        uic.loadUi('dummy-experiment-ui.ui', self)
+        uic.loadUi('biofum-experiment.ui', self)
         self.experiment = experiment
 
         self.Main_widget = self.replace_widget(
