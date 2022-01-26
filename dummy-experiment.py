@@ -3,6 +3,9 @@ import nplab
 import sys
 from nplab.experiment import Experiment, ExperimentStopped
 from nplab.utils.notified_property import DumbNotifiedProperty
+from nplab.instrument.stage import DummyStage
+from nplab.instrument.spectrometer import DummySpectrometer
+from nplab.instrument.camera import DummyCamera
 
 #  Gui Imports
 from nplab.ui.ui_tools import UiTools, QuickControlBox
@@ -11,11 +14,17 @@ from nplab.utils.gui import QtWidgets, get_qt_app, uic
 
 # Worth asking for a manual position reading first to compare to!
 class BioFuMExperiment(Experiment):
-    reading_interval = DumbNotifiedProperty(5)
+    reading_interval = DumbNotifiedProperty(1) #  minutes
 
-    def __init__(self, reading_interval=5):
+    def __init__(self, reading_interval=1):
         super().__init__()
-        self.reading_interval = reading_interval #  Default: 5 seconds between readings
+        self.reading_interval = reading_interval
+
+        #  Iniialise devices
+        self.stage = DummyStage()
+        self.camera = DummyCamera()
+        self.spectrometer = DummySpectrometer()
+        #  camera_and_stage: Ignoring because it'll probably be weird with dummies
 
     def run(self, *args, **kwargs):
         iteration = 0
@@ -28,18 +37,15 @@ class BioFuMExperiment(Experiment):
                 self.log(f"Starting iteration {iteration}")
                 iteration_start = time.time()
 
-                self.log('Focusing')
-                self.log('Dummy: Focusing!')
                 self.log('Taking picture')
-                self.log('Dummy: Taking picture!')
+                images.create_dataset(self.camera.raw_image(
+                                      bundle_metadata=True,
+                                      update_latest_frame=True))
                 self.log('Taking spectrum')
-                self.log('Dummy: Taking spectrum!')
+                spectra.create_dataset(self.spectrometer.read_spectrum(
+                    bundle_metadata=True))
 
-                if iteration == 3:
-                    self.log(f'Stopping after iteration {iteration}')
-                    self.stop()
-
-                next_iteration = iteration_start + self.reading_interval
+                next_iteration = iteration_start + (self.reading_interval * 60)
                 time_to_wait = next_iteration - time.time()
                 self.log(f'Iteration {iteration} complete. Waiting...')
                 self.wait_or_stop(time_to_wait)
