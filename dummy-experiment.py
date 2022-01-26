@@ -6,6 +6,7 @@ from nplab.utils.notified_property import DumbNotifiedProperty
 from nplab.instrument.stage import DummyStage
 from nplab.instrument.spectrometer import DummySpectrometer
 from nplab.instrument.camera import DummyCamera
+from nplab.instrument.camera.camera_with_location import CameraWithLocation
 
 #  Gui Imports
 from nplab.ui.ui_tools import UiTools, QuickControlBox
@@ -24,7 +25,7 @@ class BioFuMExperiment(Experiment):
         self.stage = DummyStage()
         self.camera = DummyCamera()
         self.spectrometer = DummySpectrometer()
-        #  camera_and_stage: Ignoring because it'll probably be weird with dummies
+        self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
     def run(self, *args, **kwargs):
         iteration = 0
