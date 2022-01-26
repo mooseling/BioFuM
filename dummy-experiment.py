@@ -40,12 +40,14 @@ class BioFuMExperiment(Experiment):
                 iteration_start = time.time()
 
                 self.log('Taking picture')
-                images.create_dataset(self.camera.raw_image(
-                                      bundle_metadata=True,
-                                      update_latest_frame=True))
-                self.log('Taking spectrum')
-                spectra.create_dataset(self.spectrometer.read_spectrum(
-                    bundle_metadata=True))
+                images.create_dataset('image_%d',
+                                      data=self.camera.raw_image(
+                                          bundle_metadata=True,
+                                          update_latest_frame=True))
+                self.log('Reading spectrum')
+                spectra.create_dataset('spectrum_%d',
+                                       data=self.spectrometer.read_spectrum(
+                                           bundle_metadata=True))
 
                 next_iteration = iteration_start + (self.reading_interval * 60)
                 time_to_wait = next_iteration - time.time()
