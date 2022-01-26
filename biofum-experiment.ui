@@ -7,12 +7,17 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="Main_layout">
+
+   <!-- Top Row -->
     <item row="0" column="0">
       <layout class="QGridLayout" name="Controls">
         <item row="0" column="0">
          <widget class="QWidget" name="Main_widget" native="true"/>
         </item>
         <item row="0" column="1">
+         <widget class="QWidget" name="Stage_controls" native="true"/>
+        </item>
+        <!-- <item row="0" column="1">
           <widget class="QWidget" name="Timer" native="true"/>
         </item>
         <item row="1" column="0" columnspan="2">
@@ -20,16 +25,18 @@
         </item>
         <item row="2" column="0" columnspan="2">
           <widget class="QWidget" name="Datafile" native="true"/>
-        </item>
+        </item> -->
       </layout>
     </item>
-    <item row="0" column="1">
+
+    <!-- Bottom Row -->
+    <item row="1" column="0">
       <widget class="QWidget" name="Device_viewers" native="true">
         <layout class="QGridLayout" name="Device_viewers_layout">
           <item row="0" column="0">
             <widget class="QWidget" name="Camera_viewer" native="true"/>
           </item>
-          <item row="1" column="0">
+          <item row="0" column="1">
             <widget class="QWidget" name="Spectrometer_viewer" native="true"/>
           </item>
         </layout>

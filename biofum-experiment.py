@@ -82,6 +82,11 @@ class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
             self.Main_widget,             #  old_widget
             self.experiment.get_qt_ui())  #  new_widget
 
+        self.Stage_controls = self.replace_widget(
+            self.Controls,
+            self.Stage_controls,
+            self.experiment.stage.get_qt_ui())
+
         self.Camera_viewer = self.replace_widget(
             self.Device_viewers_layout,
             self.Camera_viewer,
