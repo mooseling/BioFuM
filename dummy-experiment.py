@@ -30,8 +30,8 @@ class BioFuMExperiment(Experiment):
         iteration = 0
         try:
             self.log('Starting experiment')
-            images = self.create_data_group("images_%d")
-            spectra = self.create_data_group("spectra_%d")
+            images = self.create_data_group('images_%d')
+            spectra = self.create_data_group('spectra_%d')
 
             while True:
                 self.log(f"Starting iteration {iteration}")
