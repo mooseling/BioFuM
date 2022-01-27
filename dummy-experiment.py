@@ -16,9 +16,11 @@ from nplab.utils.gui import QtWidgets, get_qt_app, uic
 
 # Worth asking for a manual position reading first to compare to!
 class BioFuMExperiment(Experiment):
+    reading_interval = DumbNotifiedProperty(1)  # minutes
+
     def __init__(self, reading_interval=1):
         super().__init__()
-        self.reading_interval = DumbNotifiedProperty(reading_interval)  # minutes
+        self.reading_interval = reading_interval
 
         #  Iniialise devices
         self.stage = DummyStage()
