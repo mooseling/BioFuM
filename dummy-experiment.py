@@ -26,6 +26,11 @@ class BioFuMExperiment(Experiment):
         self.spectrometer = DummySpectrometer()
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
+        velocities = {'x':1, 'y':1, 'z':1}
+        self.x_velocity = velocities['x']
+        self.y_velocity = velocities['y']
+        self.z_velocity = velocities['z']
+
     def run(self, *args, **kwargs):
         iteration = 0
         try:
@@ -65,11 +70,48 @@ class BioFuMExperiment(Experiment):
         """Return a user interface for the experiment"""
         control_box = QuickControlBox("BioFuM Experiment")
         control_box.add_doublespinbox("reading_interval")
+        print(control_box.layout().itemAt(1))
         control_box.add_button("start")
         control_box.add_button("stop")
+        control_box.add_doublespinbox('x_velocity')
+        control_box.add_doublespinbox('y_velocity')
+        control_box.add_doublespinbox('z_velocity')
         control_box.auto_connect_by_name(self)
         control_box.setMinimumWidth(400)
         return control_box
+
+    @property
+    def x_velocity(self):
+        print('x_velocity getter called')
+        return self._x_velocity
+
+    @x_velocity.setter
+    def x_velocity(self, velocity):
+        # self.stage.SetVelSingleAxis('x', velocity)
+        self._x_velocity = velocity
+        print(self._x_velocity)
+
+    @property
+    def y_velocity(self):
+        print('y_velocity getter called')
+        return self._y_velocity
+
+    @y_velocity.setter
+    def y_velocity(self, velocity):
+        # self.stage.SetVelSingleAxis('y', velocity)
+        self._y_velocity = velocity
+        print(self._y_velocity)
+
+    @property
+    def z_velocity(self):
+        print('z_velocity getter called')
+        return self._z_velocity
+
+    @z_velocity.setter
+    def z_velocity(self, velocity):
+        # self.stage.SetVelSingleAxis('z', velocity)
+        self._z_velocity = velocity
+        print(self._z_velocity)
 
 
 class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):

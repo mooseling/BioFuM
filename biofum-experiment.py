@@ -23,6 +23,10 @@ class BioFuMExperiment(Experiment):
         self.spectrometer = OceanOpticsSpectrometer(0)
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
+        velocities = self.stage.GetVel()
+        self.x_velocity = velocities['x']
+        self.y_velocity = velocities['y']
+        self.z_velocity = velocities['z']
 
     def run(self):
         iteration = 0
@@ -67,12 +71,48 @@ class BioFuMExperiment(Experiment):
         box.add_doublespinbox("reading_interval")
         box.add_button("start")
         box.add_button("stop")
+        box.add_doublespinbox('x_velocity')
+        box.add_doublespinbox('y_velocity')
+        box.add_doublespinbox('z_velocity')
         box.auto_connect_by_name(self)
         control_box.setMinimumWidth(400)
         return box
 
+    @property
+    def x_velocity(self):
+        print('x_velocity getter called')
+        return self._x_velocity
 
-class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
+    @x_velocity.setter
+    def x_velocity(self, velocity):
+        self.stage.SetVelSingleAxis('x', velocity)
+        self._x_velocity = velocity
+        self.log(f'setting x velocity to {self._x_velocity}')
+
+    @property
+    def y_velocity(self):
+        print('y_velocity getter called')
+        return self._y_velocity
+
+    @y_velocity.setter
+    def y_velocity(self, velocity):
+        self.stage.SetVelSingleAxis('y', velocity)
+        self._y_velocity = velocity
+        self.log(f'setting y velocity to {self._y_velocity}')
+
+    @property
+    def z_velocity(self):
+        print('z_velocity getter called')
+        return self._z_velocity
+
+    @z_velocity.setter
+    def z_velocity(self, velocity):
+        self.stage.SetVelSingleAxis('z', velocity)
+        self._z_velocity = velocity
+        self.log(f'setting z velocity to {self._z_velocity}')
+
+
+class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
     def __init__(self, experiment, parent=None):
         super(BioFuMExperimentGui, self).__init__(parent)
         uic.loadUi('biofum-experiment.ui', self)
