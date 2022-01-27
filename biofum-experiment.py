@@ -1,3 +1,4 @@
+import sys
 import time
 import nplab
 import traceback
@@ -12,15 +13,14 @@ from nplab.utils.gui import QtWidgets, get_qt_app, uic
 
 
 class BioFuMExperiment(Experiment):
-    reading_interval = DumbNotifiedProperty(10) #  minutes
     def __init__(self, reading_interval=10):
         super().__init__()
-        self.reading_interval = reading_interval
+        self.reading_interval = DumbNotifiedProperty(reading_interval)  # minutes
 
         #  Iniialise devices
         self.stage = Tango()
         self.camera = LumeneraCamera()
-        self.spectrometer = OceanOpticsSpectrometer()
+        self.spectrometer = OceanOpticsSpectrometer(0)
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
 
@@ -53,7 +53,7 @@ class BioFuMExperiment(Experiment):
                 self.wait_or_stop(time_to_wait)
                 iteration += 1
         except ExperimentStopped:
-            pass #  don't raise an error if we just clicked "stop"
+            pass  # don't raise an error if we just clicked "stop"
         except Exception as e:
             self.log('Error!')
             self.log(str(e))
@@ -73,14 +73,14 @@ class BioFuMExperiment(Experiment):
 
 class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
     def __init__(self, experiment, parent=None):
-        super(BioFuMExperiment_Gui, self).__init__(parent)
+        super(BioFuMExperimentGui, self).__init__(parent)
         uic.loadUi('biofum-experiment.ui', self)
         self.experiment = experiment
 
         self.Main_widget = self.replace_widget(
-            self.Controls,                #  layout
-            self.Main_widget,             #  old_widget
-            self.experiment.get_qt_ui())  #  new_widget
+            self.Controls,                # layout
+            self.Main_widget,             # old_widget
+            self.experiment.get_qt_ui())  # new_widget
 
         self.Stage_controls = self.replace_widget(
             self.Controls,
@@ -100,7 +100,7 @@ class BioFuMExperiment_Gui(QtWidgets.QMainWindow, UiTools):
 
 if __name__ == '__main__':
     try:
-        nplab.current_datafile() #  Open diagloue to create file
+        nplab.current_datafile()  # Open diagloue to create file
     except Exception as e:
         print('Error trying to set dataset')
         print(e)
@@ -115,8 +115,7 @@ if __name__ == '__main__':
         print('Stopping')
         quit()
 
-    try:
-        bfm_experiment.run()
-    except Exception as e:
-        print('Error calling BioFuMExperiment.run')
-        print(str(e))
+    app = get_qt_app()
+    bfm_experiment_gui = BioFuMExperimentGui(bfm_experiment)
+    bfm_experiment_gui.show()
+    sys.exit(app.exec_())
