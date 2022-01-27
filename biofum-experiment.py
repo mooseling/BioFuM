@@ -68,6 +68,7 @@ class BioFuMExperiment(Experiment):
         box.add_button("start")
         box.add_button("stop")
         box.auto_connect_by_name(self)
+        control_box.setMinimumWidth(400)
         return box
 
 
