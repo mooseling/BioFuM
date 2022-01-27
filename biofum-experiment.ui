@@ -17,15 +17,6 @@
         <item row="0" column="1">
          <widget class="QWidget" name="Stage_controls" native="true"/>
         </item>
-        <!-- <item row="0" column="1">
-          <widget class="QWidget" name="Timer" native="true"/>
-        </item>
-        <item row="1" column="0" columnspan="2">
-          <widget class="QWidget" name="Log" native="true"/>
-        </item>
-        <item row="2" column="0" columnspan="2">
-          <widget class="QWidget" name="Datafile" native="true"/>
-        </item> -->
       </layout>
     </item>
 
