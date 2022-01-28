@@ -20,7 +20,7 @@ class BioFuMExperiment(Experiment):
         self.reading_interval = reading_interval
 
         #  Iniialise devices
-        self.stage = Tango()
+        self.stage = Tango(com_name='COM1')
         self.camera = LumeneraCamera()
         self.spectrometer = OceanOpticsSpectrometer(0)
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
