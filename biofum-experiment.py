@@ -3,7 +3,7 @@ import time
 import nplab
 import traceback
 from nplab.experiment import Experiment, ExperimentStopped
-from nplab.instrument.stage.Marzhauser.tango import Tango
+from nplab.instrument.stage.Marzhauser.tango import Tango, translate_axis
 from nplab.instrument.camera.lumenera import LumeneraCamera
 from nplab.instrument.camera.camera_with_location import CameraWithLocation
 from nplab.instrument.spectrometer.seabreeze import OceanOpticsSpectrometer
@@ -87,9 +87,10 @@ class BioFuMExperiment(Experiment):
 
     @x_velocity.setter
     def x_velocity(self, velocity):
-        self.stage.SetVelSingleAxis('x', velocity)
-        self._x_velocity = velocity
         self.log(f'setting x velocity to {self._x_velocity}')
+        axis_code = translate_axis('x')
+        self.stage.SetVelSingleAxis(axis_code, velocity)
+        self._x_velocity = velocity
 
     @property
     def y_velocity(self):
@@ -98,9 +99,10 @@ class BioFuMExperiment(Experiment):
 
     @y_velocity.setter
     def y_velocity(self, velocity):
-        self.stage.SetVelSingleAxis('y', velocity)
-        self._y_velocity = velocity
         self.log(f'setting y velocity to {self._y_velocity}')
+        axis_code = translate_axis('y')
+        self.stage.SetVelSingleAxis(axis_code, velocity)
+        self._y_velocity = velocity
 
     @property
     def z_velocity(self):
@@ -109,9 +111,10 @@ class BioFuMExperiment(Experiment):
 
     @z_velocity.setter
     def z_velocity(self, velocity):
-        self.stage.SetVelSingleAxis('z', velocity)
-        self._z_velocity = velocity
         self.log(f'setting z velocity to {self._z_velocity}')
+        axis_code = translate_axis('z')
+        self.stage.SetVelSingleAxis(axis_code, velocity)
+        self._z_velocity = velocity
 
 
 class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
