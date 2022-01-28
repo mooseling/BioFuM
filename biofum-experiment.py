@@ -77,7 +77,7 @@ class BioFuMExperiment(Experiment):
         box.add_doublespinbox('y_velocity')
         box.add_doublespinbox('z_velocity')
         box.auto_connect_by_name(self)
-        control_box.setMinimumWidth(400)
+        box.setMinimumWidth(400)
         return box
 
     @property
