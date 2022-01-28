@@ -19,7 +19,7 @@ class BioFuMExperiment(Experiment):
         super().__init__()
         self.reading_interval = reading_interval
 
-        #  Iniialise devices
+        #  Initialise devices
         self.stage = Tango(com_name='COM1')
         self.camera = LumeneraCamera()
         self.spectrometer = OceanOpticsSpectrometer(0)
@@ -143,7 +143,7 @@ class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
 
 if __name__ == '__main__':
     try:
-        nplab.current_datafile()  # Open diagloue to create file
+        nplab.current_datafile()  # Open dialogue to create file
     except Exception as e:
         print('Error trying to set dataset')
         print(e)
