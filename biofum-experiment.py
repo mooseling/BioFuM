@@ -92,10 +92,11 @@ class BioFuMExperiment(Experiment):
 
     @x_velocity.setter
     def x_velocity(self, velocity):
-        self.log(f'setting x velocity to {self._x_velocity}')
+        self.log(f'setting x velocity to {velocity}')
         axis_code = translate_axis('x')
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._x_velocity = velocity
+        self.log(f'Done. x velocity is not {self._x_velocity}')
 
     @property
     def y_velocity(self):
@@ -104,10 +105,11 @@ class BioFuMExperiment(Experiment):
 
     @y_velocity.setter
     def y_velocity(self, velocity):
-        self.log(f'setting y velocity to {self._y_velocity}')
+        self.log(f'setting y velocity to {velocity}')
         axis_code = translate_axis('y')
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._y_velocity = velocity
+        self.log(f'Done. y velocity is not {self._y_velocity}')
 
     @property
     def z_velocity(self):
@@ -116,10 +118,11 @@ class BioFuMExperiment(Experiment):
 
     @z_velocity.setter
     def z_velocity(self, velocity):
-        self.log(f'setting z velocity to {self._z_velocity}')
+        self.log(f'setting z velocity to {velocity}')
         axis_code = translate_axis('z')
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._z_velocity = velocity
+        self.log(f'Done. z velocity is not {self._z_velocity}')
 
 
 class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
