@@ -35,7 +35,7 @@ class BioFuMExperiment(Experiment):
         self.y_velocity = velocities['y']
         self.z_velocity = velocities['z']
 
-    def run(self):
+    def run(self, *args, **kwargs):
         iteration = 0
         try:
             self.log('Starting experiment')
@@ -98,7 +98,7 @@ class BioFuMExperiment(Experiment):
         axis_code = translate_axis('x')
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._x_velocity = velocity
-        self.log(f'Done. x velocity is not {self._x_velocity}')
+        self.log(f'Done. x velocity is now {self._x_velocity}')
 
     @property
     def y_velocity(self):
@@ -111,7 +111,7 @@ class BioFuMExperiment(Experiment):
         axis_code = translate_axis('y')
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._y_velocity = velocity
-        self.log(f'Done. y velocity is not {self._y_velocity}')
+        self.log(f'Done. y velocity is now {self._y_velocity}')
 
     @property
     def z_velocity(self):
@@ -124,7 +124,7 @@ class BioFuMExperiment(Experiment):
         axis_code = translate_axis('z')
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._z_velocity = velocity
-        self.log(f'Done. z velocity is not {self._z_velocity}')
+        self.log(f'Done. z velocity is now {self._z_velocity}')
 
     def DigitalWhiteBalance(self, *args, **kwargs):
         try:
@@ -168,7 +168,7 @@ class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
         self.Camera_viewer = self.replace_widget(
             self.Device_viewers_layout,
             self.Camera_viewer,
-            self.experiment.camera.get_qt_ui())
+            self.experiment.camera_and_stage.get_qt_ui())
 
         self.Spectrometer_viewer = self.replace_widget(
             self.Device_viewers_layout,
