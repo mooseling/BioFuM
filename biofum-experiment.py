@@ -29,6 +29,10 @@ class BioFuMExperiment(Experiment):
         self.log('Creating Camera-With-Location (camera + stage)')
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
+        # Initialise velocities (Not sure this is necessary but it worked once)
+        self.x_velocity = 0
+        self.y_velocity = 0
+        self.z_velocity = 0
         self.log('Checking Tango velocities')
         velocities = self.stage.GetVel()
         self.x_velocity = velocities['x']
