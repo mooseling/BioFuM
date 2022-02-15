@@ -81,6 +81,8 @@ class BioFuMExperiment(Experiment):
         box.add_doublespinbox('x_velocity')
         box.add_doublespinbox('y_velocity')
         box.add_doublespinbox('z_velocity')
+        box.add_button('DigitalWhiteBalance')
+        box.add_button('OneShotAutoWhiteBalance')
         box.auto_connect_by_name(self)
         box.setMinimumWidth(400)
         return box
@@ -123,6 +125,28 @@ class BioFuMExperiment(Experiment):
         self.stage.SetVelSingleAxis(axis_code, velocity)
         self._z_velocity = velocity
         self.log(f'Done. z velocity is not {self._z_velocity}')
+
+    def DigitalWhiteBalance(self, *args, **kwargs):
+        try:
+            image_size = self.camera.get_metadata()['image_size']
+            width, height = image_size
+            try:
+                self.camera.cam.DigitalWhiteBalance(0, 0, width, height)
+            except Exception as e:
+                self.log(f'Exception: {str(e)}')
+        except Exception as e:
+            self.log(f'Did something wrong: {str(e)}')
+
+    def OneShotAutoWhiteBalance(self, *args, **kwargs):
+        try:
+            image_size = self.camera.get_metadata()['image_size']
+            width, height = image_size
+            try:
+                self.camera.cam.OneShotAutoWhiteBalance(0, 0, width, height)
+            except Exception as e:
+                self.log(f'Exception: {str(e)}')
+        except Exception as e:
+            self.log(f'Did something wrong: {str(e)}')
 
 
 class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
