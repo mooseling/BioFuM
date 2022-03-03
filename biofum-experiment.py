@@ -39,6 +39,13 @@ class BioFuMExperiment(Experiment):
         self.y_velocity = velocities['y']
         self.z_velocity = velocities['z']
 
+        self.log('Checking Tango axis directions out of curiosity...')
+        try:
+            self.log('x: {0}, y: {1}, z: {2}, a: {3}'.format(self.stage.GetAxisDirection()))
+        except Exception as e:
+            self.log(f'Checking directions flubbed. Apparently, {str(e)}')
+            print('By the way, this means the reverse directions button won\'t work either.')
+
     def run(self, *args, **kwargs):
         iteration = 0
         try:
@@ -87,6 +94,8 @@ class BioFuMExperiment(Experiment):
         box.add_doublespinbox('z_velocity')
         box.add_button('DigitalWhiteBalance')
         box.add_button('OneShotAutoWhiteBalance')
+        box.add_button('reverse_directions')
+        box.add_button('save_tango_config')
         box.auto_connect_by_name(self)
         box.setMinimumWidth(400)
         return box
@@ -151,6 +160,27 @@ class BioFuMExperiment(Experiment):
                 self.log(f'Exception: {str(e)}')
         except Exception as e:
             self.log(f'Did something wrong: {str(e)}')
+
+    def reverse_directions(self):
+        self.log('Reverse axes called. Getting current directions...')
+        x_direction, y_direction, z_direction, a_direction = self.stage.GetAxisDirection()
+        self.log(f'They are {x_direction}, {y_direction}, {z_direction}, {a_direction}.')
+        new_x_direction = 0 if x_direction else 1
+        new_y_direction = 0 if y_direction else 1
+        new_z_direction = 0 if z_direction else 1
+        new_a_direction = 0 if a_direction else 1
+        self.log(f'Setting them to {new_x_direction}, {new_y_direction}, {new_z_direction}, {new_a_direction}.')
+        self.stage.SetAxisDirection(new_x_direction, new_y_direction, new_z_direction, new_a_direction)
+        self.log('Done. Getting current directions again:')
+        final_x_direction, final_y_direction, final_z_direction, final_a_direction = self.stage.GetAxisDirection()
+        self.log(f'{final_x_direction}, {final_y_direction}, {final_z_direction}, {final_a_direction}.')
+
+    def save_tango_config(self):
+        self.log('Saving tango_config.txt...')
+        try:
+            self.stage.SaveConfig('tango.config.txt')
+        except Exception as e:
+            self.log(f'Didn\'t work: {str(e)}')
 
 
 class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
