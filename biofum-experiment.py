@@ -55,7 +55,7 @@ class BioFuMExperiment(Experiment):
                 iteration_start = time.time()
 
                 self.log('Focusing')
-                self.camera_and_stage.autofocus()
+                self.autofocus()
                 self.log('Taking picture')
                 images.create_dataset('image_%d',
                                       data=self.camera.raw_image(
@@ -93,9 +93,34 @@ class BioFuMExperiment(Experiment):
         box.add_button('OneShotAutoWhiteBalance')
         box.add_button('reverse_directions')
         box.add_button('save_tango_config')
+        box.add_button('autofocus')
         box.auto_connect_by_name(self)
         box.setMinimumWidth(400)
         return box
+
+    def autofocus(self):
+        start_z_speed = self.z_velocity
+        self.z_velocity = 15 # decent speed for focusing
+
+        # Rough focus to within 1000 units
+        self.camera_and_stage.af_step_size = 500
+        self.camera_and_stage.af_steps = 7 # Checks 3 steps in each direction
+        self.camera_and_stage.autofocus()
+
+        # Finer focus to within 200 units
+        self.camera_and_stage.af_steps = 9 # Checks 4 steps in each direction
+        self.camera_and_stage.af_step_size = 100
+        self.camera_and_stage.autofocus()
+
+        # Even finer focus to within 40 units
+        self.camera_and_stage.af_step_size = 20
+        self.camera_and_stage.autofocus()
+
+        # Finest focus to within 8 units
+        self.camera_and_stage.af_step_size = 4
+        self.camera_and_stage.autofocus()
+        self.z_velocity = start_z_speed
+
 
     @property
     def x_velocity(self):
