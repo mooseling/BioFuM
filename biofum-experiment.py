@@ -29,6 +29,7 @@ class BioFuMExperiment(Experiment):
         # Otherwise, LumeneraCamera will take images with default settings
         # Which sounds sensible, but the default settings override white-balance
         self.camera.video_priority = True
+        self.camera.live_view = True  # Just so the preview is running by default
 
         self.log('Creating Ocean Optics Spectrometer')
         self.spectrometer = OceanOpticsSpectrometer(0)
