@@ -29,19 +29,6 @@ class BioFuMExperiment(Experiment):
         self.log('Creating Camera-With-Location (camera + stage)')
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
-        # Initialise velocities (Not sure this is necessary but it worked once)
-        self.log('Checking Tango velocities')
-        velocities = self.stage.GetVel()
-        self.x_velocity = velocities['x']
-        self.y_velocity = velocities['y']
-        self.z_velocity = velocities['z']
-
-        self.log('Checking Tango axis directions out of curiosity...')
-        try:
-            self.log('x: {0}, y: {1}, z: {2}, a: {3}'.format(self.stage.GetAxisDirection()))
-        except Exception as e:
-            self.log(f'Checking directions flubbed. Apparently, {str(e)}')
-            print('By the way, this means the reverse directions button won\'t work either.')
 
     def run(self, *args, **kwargs):
         iteration = 0
@@ -89,10 +76,7 @@ class BioFuMExperiment(Experiment):
         box.add_doublespinbox('x_velocity')
         box.add_doublespinbox('y_velocity')
         box.add_doublespinbox('z_velocity')
-        box.add_button('DigitalWhiteBalance')
         box.add_button('OneShotAutoWhiteBalance')
-        box.add_button('reverse_directions')
-        box.add_button('save_tango_config')
         box.add_button('autofocus')
         box.auto_connect_by_name(self)
         box.setMinimumWidth(400)
@@ -155,17 +139,6 @@ class BioFuMExperiment(Experiment):
         axis_code = translate_axis('z')
         self.stage.SetVelSingleAxis(axis_code, velocity)
 
-    def DigitalWhiteBalance(self, *args, **kwargs):
-        try:
-            image_size = self.camera.get_metadata()['image_size']
-            width, height = image_size
-            try:
-                self.camera.cam.DigitalWhiteBalance(0, 0, width, height)
-            except Exception as e:
-                self.log(f'Exception: {str(e)}')
-        except Exception as e:
-            self.log(f'Did something wrong: {str(e)}')
-
     def OneShotAutoWhiteBalance(self, *args, **kwargs):
         try:
             image_size = self.camera.get_metadata()['image_size']
@@ -176,27 +149,6 @@ class BioFuMExperiment(Experiment):
                 self.log(f'Exception: {str(e)}')
         except Exception as e:
             self.log(f'Did something wrong: {str(e)}')
-
-    def reverse_directions(self):
-        self.log('Reverse axes called. Getting current directions...')
-        x_direction, y_direction, z_direction, a_direction = self.stage.GetAxisDirection()
-        self.log(f'They are {x_direction}, {y_direction}, {z_direction}, {a_direction}.')
-        new_x_direction = 0 if x_direction else 1
-        new_y_direction = 0 if y_direction else 1
-        new_z_direction = 0 if z_direction else 1
-        new_a_direction = 0 if a_direction else 1
-        self.log(f'Setting them to {new_x_direction}, {new_y_direction}, {new_z_direction}, {new_a_direction}.')
-        self.stage.SetAxisDirection(new_x_direction, new_y_direction, new_z_direction, new_a_direction)
-        self.log('Done. Getting current directions again:')
-        final_x_direction, final_y_direction, final_z_direction, final_a_direction = self.stage.GetAxisDirection()
-        self.log(f'{final_x_direction}, {final_y_direction}, {final_z_direction}, {final_a_direction}.')
-
-    def save_tango_config(self):
-        self.log('Saving tango_config.txt...')
-        try:
-            self.stage.SaveConfig('tango.config.txt')
-        except Exception as e:
-            self.log(f'Didn\'t work: {str(e)}')
 
 
 class BioFuMExperimentGui(QtWidgets.QMainWindow, UiTools):
