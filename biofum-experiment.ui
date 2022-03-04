@@ -14,9 +14,6 @@
         <item row="0" column="0">
          <widget class="QWidget" name="Main_widget" native="true"/>
         </item>
-        <item row="0" column="1">
-         <widget class="QWidget" name="Stage_controls" native="true"/>
-        </item>
       </layout>
     </item>
 
