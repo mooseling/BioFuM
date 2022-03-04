@@ -100,41 +100,35 @@ class BioFuMExperiment(Experiment):
     @property
     def x_velocity(self):
         print('x_velocity getter called')
-        return self._x_velocity
+        return self.stage.GetVel()['x']
 
     @x_velocity.setter
     def x_velocity(self, velocity):
         self.log(f'setting x velocity to {velocity}')
         axis_code = translate_axis('x')
         self.stage.SetVelSingleAxis(axis_code, velocity)
-        self._x_velocity = velocity
-        self.log(f'Done. x velocity is now {self._x_velocity}')
 
     @property
     def y_velocity(self):
         print('y_velocity getter called')
-        return self._y_velocity
+        return self.stage.GetVel()['y']
 
     @y_velocity.setter
     def y_velocity(self, velocity):
         self.log(f'setting y velocity to {velocity}')
         axis_code = translate_axis('y')
         self.stage.SetVelSingleAxis(axis_code, velocity)
-        self._y_velocity = velocity
-        self.log(f'Done. y velocity is now {self._y_velocity}')
 
     @property
     def z_velocity(self):
         print('z_velocity getter called')
-        return self._z_velocity
+        return self.stage.GetVel()['z']
 
     @z_velocity.setter
     def z_velocity(self, velocity):
         self.log(f'setting z velocity to {velocity}')
         axis_code = translate_axis('z')
         self.stage.SetVelSingleAxis(axis_code, velocity)
-        self._z_velocity = velocity
-        self.log(f'Done. z velocity is now {self._z_velocity}')
 
     def DigitalWhiteBalance(self, *args, **kwargs):
         try:
