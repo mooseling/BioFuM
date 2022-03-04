@@ -22,10 +22,17 @@ class BioFuMExperiment(Experiment):
         #  Initialise devices
         self.log('Creating Tango')
         self.stage = Tango(com_name='COM1')
+
         self.log('Creating Lumenera Camera')
         self.camera = LumeneraCamera()
+        # Setting video_priority=True means that images we take will come from the video stream
+        # Otherwise, LumeneraCamera will take images with default settings
+        # Which sounds sensible, but the default settings override white-balance
+        self.camera.video_priority = True
+
         self.log('Creating Ocean Optics Spectrometer')
         self.spectrometer = OceanOpticsSpectrometer(0)
+
         self.log('Creating Camera-With-Location (camera + stage)')
         self.camera_and_stage = CameraWithLocation(self.camera, self.stage)
 
